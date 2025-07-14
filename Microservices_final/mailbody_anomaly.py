@@ -7,7 +7,7 @@ import inspect
 import json
 
 login_creds = {"username": "admin", "password": "LastDance"}
-server_ip = "192.168.1.104:9001"
+server_ip = "127.0.0.1:8000"
 generate_token_url = f"http://{server_ip}/predictive/token/"
 get_anomaly_url = f"http://{server_ip}/predictive/anamoly_records/"
 error_log_url = f"http://{server_ip}/predictive/error_log/"
@@ -60,12 +60,17 @@ def exception_logger(exp_type,exp_severity,exp_shrt,exp_json):
 
 
 def post_data(data_json,type_):
+    
     url_type = {"anomaly": get_anomaly_url,"error_log": error_log_url,"alert":alert}
+
     try:
         bearer_token = requests.post(generate_token_url,json =login_creds)
-        # print(Fore.GREEN + str(bearer_token.json()["access"])+ "----"+str(data_json))
-        headers = {"Authorization": f"Bearer {bearer_token.json()["access"]}",'Content-Type':'application/json'}
-        # print(data_json)
+        
+        headers = {
+            "Authorization": f"Bearer {bearer_token.json()['access']}",
+            "Content-Type": "application/json"
+        }
+
         res = requests.post(url_type[type_],json =data_json,headers=headers)
         color_printer("request", str(res.json()))
 

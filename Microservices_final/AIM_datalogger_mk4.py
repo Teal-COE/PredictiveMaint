@@ -21,17 +21,25 @@ import inspect
 #API - Magenta
 #troubleshooting - yellow
 
-
 warnings.filterwarnings("ignore")
 init(autoreset=True)
 
 login_creds = {"username": "admin", "password": "LastDance"}
-server_ip = "192.168.1.104:9001"
+
+server_ip = "127.0.0.1:8000"
+
 generate_token_url = f"http://{server_ip}/predictive/token/"
+
 get_plc_nos = f"http://{server_ip}/predictive/datalog_sensor/"
+
 error_log_url = f"http://{server_ip}/predictive/error_log/"
+
 data_log_url = f"http://{server_ip}/predictive/datalog/"
+
+
+
 globals()['res_json'] = {}
+
 exception_details = {}
 exception_timerepeat = {'5': 5,'4': 10, '3':15 ,'2':15,'1':20}
 service = "DataLog"
@@ -46,6 +54,7 @@ def get_timestamp():
 
 def get_dt():
     return datetime.datetime.strptime(get_timestamp(), "%Y-%m-%d %H:%M:%S")
+
 def exception_logger(exp_type,exp_severity,exp_shrt,exp_json):
     try:
         exp_shrt = str(exp_shrt)
@@ -73,14 +82,16 @@ def exception_logger(exp_type,exp_severity,exp_shrt,exp_json):
         print(get_timestamp()+" >> "+ "---handled1---")
         traceback.print_exc()
 
-
-
 def post_data(data_json,type_):
     url_type = {"data": data_log_url,"error_log": error_log_url,"get_sensors": get_plc_nos}
     try:
         bearer_token = requests.post(generate_token_url,json =login_creds)
         # print(Fore.GREEN + str(bearer_token.json()["access"])+ "----"+str(data_json))
-        headers = {"Authorization": f"Bearer {bearer_token.json()["access"]}",'Content-Type':'application/json'}
+        headers = {
+            "Authorization": f"Bearer {bearer_token.json()['access']}",
+            "Content-Type": "application/json"
+        }
+
         res = requests.post(url_type[type_],json =data_json,headers=headers)
         color_printer("request", str(res.json()))
 
@@ -91,6 +102,7 @@ def post_data(data_json,type_):
         color_printer("error", "postdata"+str(e))
         # traceback.print_exc()
         # print("---handled2---"+get_timestamp())
+
 # try:
 #     post_data({"service" : "DataLog","error_category" : "Program start log","error_text":str("No error, using as log"),"severity" : 1,"timestamp":get_timestamp()},"error_log")
 # except:
@@ -102,10 +114,12 @@ class AIM_Logger_main:
         self.identity = 'AIM_Logger_main'
         self.thread_active_nos = 1
         self.active_threads = {}
+
         # self.generate_token_url = "http://192.168.19.119:9001/predictive/token/"
         # self.login_creds = {"username": "admin", "password": "LastDance"}
         # self.get_plc_nos = "http://192.168.19.119:9001/predictive/datalog_sensor/"
         # self.error_log_url = "http://192.168.19.119:9001/predictive/error_log/"
+        
         globals()['res_json'] ={}
         self.current_min = ''
 
@@ -252,6 +266,7 @@ class sensor_creator:
             post_data(json,"data")
         else:
             print(get_timestamp()+" >> "+"records 0 "+self.identity)
+
     def data_summarizer(self,id):
         count = len(self.dfs[id])
         summary = self.dfs[id].agg(["max", "min", "mean"])
@@ -298,7 +313,6 @@ class sensor_creator:
                 json_ = {"service": service, "error_category": f_name, "error_text": traceback.format_exc(),
                          "severity": exp_severity, "timestamp": get_timestamp()}
                 exception_logger(f_name + '_', exp_severity, e, json_)
-
 
             try:
 
@@ -360,8 +374,9 @@ class sensor_creator:
                 exception_logger(f_name + '_', exp_severity, e, json_)
 
 
+
 if __name__ == "__main__":
-    config_file = r'D:\PredictiMach\PredictiveMaintenance\Microservices_final\AIM_datalogger_config.json'
+    config_file = r'D:\TEAL\PredictiveMaint\PredictiveMaintenance\Microservices_final\AIM_datalogger_config.json'
     if os.path.exists(config_file):
         config = json.loads(open(config_file).read())
         login_creds = {"username": config["username"], "password": config["password"]}
