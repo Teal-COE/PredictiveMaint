@@ -1,0 +1,42 @@
+<nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+    <a class="navbar-brand" href="#">Predictive Maintenance</a>
+    <button class="btn btn-link btn-sm order-1 order-lg-0" id="sidebarToggle" href="#">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div class="d-flex align-items-center ml-auto mr-3 text-white">
+        {% if request.session.selected_company %}
+            <span><b>Company:</b> {{ request.session.selected_company }}</span>&nbsp;
+        {% endif %}
+        {% if request.session.selected_plant %}
+            <span><b>Plant:</b> {{ request.session.selected_plant }}</span>&nbsp;
+        {% endif %}
+        {% if request.session.selected_line %}
+            <span><b>Line:</b> {{ request.session.selected_line }}</span>&nbsp;
+        {% endif %}
+        <span id="india-time" class="ml-3"></span>
+    </div>
+
+    <div>
+        <a href="{% url 'login_screen' %}" class="btn btn-danger btn-sm ml-2">Logout</a>
+    </div>
+</nav>
+
+<script>
+function updateIndiaTime() {
+    const now = new Date();
+    // Calculate IST (UTC+5:30)
+    const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+    const istTime = new Date(utc + (5.5 * 60 * 60 * 1000));
+    const dd = String(istTime.getDate()).padStart(2, '0');
+    const mm = String(istTime.getMonth() + 1).padStart(2, '0'); // January is 0!
+    const yyyy = istTime.getFullYear();
+    const hh = String(istTime.getHours()).padStart(2, '0');
+    const min = String(istTime.getMinutes()).padStart(2, '0');
+    const ss = String(istTime.getSeconds()).padStart(2, '0');
+    const formatted = `${dd}-${mm}-${yyyy} ${hh}:${min}:${ss}`;
+    document.getElementById('india-time').textContent = formatted;
+}
+setInterval(updateIndiaTime, 1000);
+updateIndiaTime();
+</script>

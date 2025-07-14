@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% block title %}Predictive Maintenance {% endblock %}
+
+{% block content %}
+
+<div class="container-fluid" >
+    <div class="card mt-4">
+        <div class="card-body">
+            <h5 class="card-title" style="font-size:30px">Update Organization</h5>
+            <form id="orgForm" method="POST">
+                {% csrf_token %}
+                    <div class="row align-items-end mt-2">
+                <div class="col-md-3">
+                  <label for="company_code">Company Code</label>
+                  <input name="company_code" value="{{settings_org.company_code}}" type="text" class="form-control"
+                         oninput="this.value = this.value.replace(/^\s+/, '')" required>
+                 </div>
+
+                      <div class="col-md-3">
+                  <label for="plant_code">Plant Code</label>
+                  <input name="plant_code" value="{{settings_org.plant_code}}" type="text" class="form-control"
+                         oninput="this.value = this.value.replace(/^\s+/, '')" required>
+                 </div>
+
+                 <div class="col-md-3">
+                    <label for="line_code">Line Code</label>
+                    <input name="line_code" value="{{settings_org.line_code}}" type="text" class="form-control"
+                           oninput="this.value = this.value.replace(/^\s+/, '')" required>
+                   </div>
+
+
+                <div class="col-md-3 text-end ">
+                                <button type="submit" class="btn btn-success mt-4" >Submit</button>
+                                <a href="{% url 'organization_list' %}" class="btn btn-secondary mt-4">Cancel</a>
+                            </div>
+                    </div>
+              </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascript %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<style>
+    .form-group .text-danger {
+    min-height: 1.25rem;  /* Reserve space for error */
+    display: block;
+    font-size: 0.875rem;
+}
+    .form-group {
+    position: relative;
+    min-height: 100px; /* Adjust as needed */
+}
+
+
+</style>
+<script>
+    $(document).ready(function() {
+
+    // Add custom validator to check for non-whitespace input
+    $.validator.addMethod("noWhitespace", function(value, element) {
+        return $.trim(value).length > 0;
+    }, "This field cannot be empty or whitespace only.");
+
+    // Apply validation to the form
+    $("#orgForm").validate({
+        errorClass: "text-danger",  // Error message color
+        errorElement: "span",       // Error message element
+        rules: {
+            company_code: {
+                required: true,
+                noWhitespace: true
+            },
+            plant_code: {
+                required: true,
+                noWhitespace: true
+            },
+            line_code: {
+                required: true,
+                noWhitespace: true
+            }
+        },
+        messages: {
+            company_code: {
+                required: "Please enter company_code.",
+                noWhitespace: "Please enter company_code."
+            },
+            plant_code: {
+                required: "Please enter plant_code.",
+                noWhitespace: "Please enter plant_code."
+            },
+            line_code: {
+                required: "Please enter line_code.",
+                noWhitespace: "Please enter line_code."
+            }
+        },
+        highlight: function(element) {
+            $(element).addClass('is-invalid').removeClass('is-valid');
+        },
+        unhighlight: function(element) {
+            $(element).removeClass('is-invalid').addClass('is-valid');
+        },
+    });
+});
+
+</script>
+{% endblock %}

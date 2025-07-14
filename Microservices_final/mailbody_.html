@@ -1,0 +1,44 @@
+<!--VERY VERY IMPORTANT NOTE: DONT REMOVE COMMENTS -->
+<!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="UTF-8">
+      <title>Alert Email</title>
+    </head>
+    <body style="font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 20px;">
+      <div style="max-width: 1000px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; border: 1px solid #dddddd;">
+        <div style="background-color:  #FFFF00; color: black; padding: 20px; text-align: center;">
+          <h1 style="margin: 0;">Alert | Anamoly </h1>
+        </div>
+        <div style="padding: 20px;">
+          <p>Following are the list of anomalies found: </p>
+          <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+            <thead>
+              <tr>
+                <th style="border: 1px solid #dddddd; padding: 8px; background-color: #f4f4f4;">Sno</th>
+                <th style="border: 1px solid #dddddd; padding: 8px; background-color: #f4f4f4;">Sensor</th>
+                <th style="border: 1px solid #dddddd; padding: 8px; background-color: #f4f4f4;">Limits -°C</th>
+		        <th style="border: 1px solid #dddddd; padding: 8px; background-color: #f4f4f4;">Actual Value</th>
+		        <th style="border: 1px solid #dddddd; padding: 8px; background-color: #f4f4f4;">Aggregation Type</th>
+		        <th style="border: 1px solid #dddddd; padding: 8px; background-color: #f4f4f4;">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+                <!--st--><tr>
+                        <td style="border: 1px solid #dddddd; padding: 4px;">{Sno}</td>
+                        <td style="border: 1px solid #dddddd; padding: 8px;">{Sensor}</td>
+                        <td style="border: 1px solid #dddddd; padding: 8px;">{Limits}</td>
+                        <td style="border: 1px solid #dddddd; padding: 8px;">{Actual}</td>
+                        <td style="border: 1px solid #dddddd; padding: 8px;">{Aggregation}</td>
+                        <td style="border: 1px solid #dddddd; padding: 8px;">{Status}</td>
+                </tr> <!--ed-->
+            </tbody>
+          </table>
+          <p style="margin-top: 20px;">This is test version of email</p>
+        </div>
+        <div style="background-color: #f4f4f4; color: #777; text-align: center; padding: 10px;">
+          <p style="margin: 0;">© 2025 TEAL. All rights reserved.</p>
+        </div>
+      </div>
+    </body>
+    </html>

@@ -1,0 +1,2 @@
+{"opcua_endpoint": "opc.tcp://192.168.119.1:4840","AIMServer_ip": "192.168.119.1:9001","IFM_ip": "192.168.119.101",
+  "AIMServer_username": "admin", "AIMServer_password": "LastDance","sensor_config": {"Vibration_sensor":"3"}}

@@ -1,0 +1,239 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Update Sensor
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center">
+        <div class="card mt-4">
+            <div class="card-body">
+                <h5 class="card-title" style="font-size:30px">Update Sensor Details</h5>
+                <form id="orgForm" method="POST">
+                    {% csrf_token %}
+                    <div class="row align-items-end mt-2">
+                        <!-- Element ID -->
+                        <div class="col-md-3 form-group">
+                            <label >Element ID</label>
+                            <input id="element_id" name="element_id"  value="{{sensor_view.element_id}}" type="text" class="form-control"
+                                   oninput="this.value = this.value.replace(/^\s+/, '')" required>
+                        </div>
+
+                        <!-- Element Name -->
+                        <div class="col-md-3 form-group">
+                            <label >Element Name</label>
+                            <input  id="element_name" name="element_name" value="{{sensor_view.element_name}}" type="text" class="form-control"
+                                    oninput="this.value = this.value.replace(/^\s+/, '')" required>
+                        </div>
+
+                        <!-- Tag -->
+                        <div class="col-md-3 form-group">
+                            <label for="tag">Tag</label>
+                            <input id="tag" name="tag" value="{{sensor_view.tag}}" type="text" class="form-control"
+                                   oninput="this.value = this.value.replace(/^\s+/, '')" required>
+                        </div>
+
+                        <!-- Server IP -->
+                        <div class="col-md-3 form-group">
+                            <label for="server_ip">Server IP</label>
+                            <input name="server_ip" id="server_ip" value="{{sensor_view.server_ip}}" type="text" class="form-control"
+                                   oninput="this.value = this.value.replace(/^\s+/, '')" required>
+                        </div>
+
+                        <!-- Machine Code -->
+                        <div class="col-md-3 form-group">
+                            <label for="machine_code">Machine Code</label>
+                            <input name="machine_code" id="machine_code" value="{{sensor_view.machine_code}}" type="text" class="form-control"
+                                   oninput="this.value = this.value.replace(/^\s+/, '')" required>
+                        </div>
+
+                        <!-- Element Type -->
+                        <div class="col-md-3 form-group">
+                            <label for="element_type">Element Type</label>
+                            <input name="element_type" id="element_type" value="{{sensor_view.element_type}}" type="text" class="form-control"
+                                   oninput="this.value = this.value.replace(/^\s+/, '')" required>
+                        </div>
+
+                        <!-- Model Path -->
+
+
+                        <!-- Upper Anomaly Limit -->
+                        <div class="col-md-3 form-group">
+                            <label for="upper_anamoly_limit">Upper Anomaly Limit</label>
+                            <input name="upper_anamoly_limit" id="upper_anamoly_limit" value="{{sensor_view.upper_anamoly_limit}}" type="number" class="form-control" required>
+                        </div>
+
+                        <!-- Lower Anomaly Limit -->
+                        <div class="col-md-3 form-group">
+                            <label for="lower_anamoly_limit">Lower Anomaly Limit</label>
+                            <input name="lower_anamoly_limit" id="lower_anamoly_limit" value="{{sensor_view.lower_anamoly_limit}}" type="number" class="form-control" required>
+                        </div>
+
+                        <!-- Remarks -->
+                        <div class="col-md-3 form-group">
+                            <label for="remarks">Remarks</label>
+                            <input name="remarks" id="remarks" value="{{sensor_view.remarks}}" type="text" class="form-control"
+                                   oninput="this.value = this.value.replace(/^\s+/, '')" required>
+                        </div>
+
+                        <!-- Organization ID -->
+                        <div class="col-md-3 form-group">
+                            <label for="org_id">Organization ID</label>
+                            <input name="org_id" id="org_id" value="{{sensor_view.org_id}}" type="number" class="form-control" required>
+                        </div>
+
+                        <!-- Active Checkbox -->
+                        <div class="col-md-3 pb-4">
+                            <div class="form-check">
+                                <input name="active" type="checkbox" class="form-check-input" id="active" {% if sensor_view.active %}checked{% endif %}>
+                                <label class="form-check-label" for="active">Active</label>
+                            </div>
+
+
+                        <!-- Prediction Checkbox -->
+
+                            <div class="form-check">
+                                <input name="prediction" type="checkbox" class="form-check-input" id="prediction" {% if sensor_view.prediction %}checked{% endif %}>
+                                <label class="form-check-label" for="prediction">Prediction</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="col-md-3 ">
+                        <button type="submit" class="btn btn-success mt-4">Submit</button>
+                        <a href="{% url 'sensor_list' %}" class="btn btn-secondary mt-4">Cancel</a>
+
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascript %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<style>
+    .form-group .text-danger {
+    min-height: 1.25rem;  /* Reserve space for error */
+    display: block;
+    font-size: 0.875rem;
+}
+    .form-group {
+    position: relative;
+    min-height: 85px; /* Adjust as needed */
+}
+
+
+</style>
+<script>
+    $(document).ready(function() {
+
+    // Add custom validator to check for non-whitespace input
+    $.validator.addMethod("noWhitespace", function(value, element) {
+        return $.trim(value).length > 0;
+    }, "This field cannot be empty or whitespace only.");
+
+    // Apply validation to the form
+    $("#orgForm").validate({
+        errorClass: "text-danger",  // Error message color
+        errorElement: "span",       // Error message element
+        rules: {
+            element_id: {
+                required: true,
+                noWhitespace: true
+            },
+            element_name: {
+                required: true,
+                noWhitespace: true
+            },
+            tag: {
+                required: true,
+                noWhitespace: true
+            },
+            server_ip: {
+                required: true,
+                noWhitespace: true
+            },
+            machine_code: {
+                required: true,
+                noWhitespace: true
+            },
+            element_type: {
+                required: true,
+                noWhitespace: true
+            },
+            upper_anamoly_limit: {
+                required: true,
+                noWhitespace: true
+            },
+            lower_anamoly_limit: {
+                required: true,
+                noWhitespace: true
+            },
+            remarks: {
+                required: true,
+                noWhitespace: true
+            },
+            org_id: {
+                required: true,
+                noWhitespace: true
+            }
+        },
+        messages: {
+            element_id: {
+                required: "Please enter element id.",
+                noWhitespace: "Please enter element id."
+            },
+            element_name: {
+                required: "Please enter element name.",
+                noWhitespace: "Please enter element name."
+            },
+            tag: {
+                required: "Please enter tag.",
+                noWhitespace: "Please enter tag."
+            },
+            server_ip: {
+                required: "Please enter server ip.",
+                noWhitespace: "Please enter server ip."
+            },
+            machine_code: {
+                required: "Please enter machine code.",
+                noWhitespace: "Please enter machine code."
+            },
+            element_type: {
+                required: "Please select a element type.",
+                noWhitespace: "Please enter element type."
+            },
+            upper_anamoly_limit: {
+                required: "Please enter range.",
+                noWhitespace: "Please enter range."
+            },
+            lower_anamoly_limit: {
+                required: "Please enter range.",
+                noWhitespace: "Please enter range."
+            },
+             remarks: {
+                required: "Please enter remarks.",
+                noWhitespace: "Please enter remarks."
+            },
+            org_id: {
+                required: "Please enter org id.",
+                noWhitespace: "Please enter org id."
+            }
+        },
+        highlight: function(element) {
+            $(element).addClass('is-invalid').removeClass('is-valid');
+        },
+        unhighlight: function(element) {
+            $(element).removeClass('is-invalid').addClass('is-valid');
+        },
+    });
+});
+
+</script>
+{% endblock %}

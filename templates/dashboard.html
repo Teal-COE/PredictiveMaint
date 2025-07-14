@@ -1,0 +1,158 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Login{% endblock %}
+{% block content %}
+<div class="modal fade" id="companyModal" tabindex="-1" aria-labelledby="companyModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="companyModalLabel">Line Selection</h5>
+      </div>
+      <div class="modal-body">
+        <form id="lineSelectionForm" autocomplete="off">
+          <div class="mb-3">
+            <label for="company_select" class="form-label">Company Select</label>
+            <select class="form-control" id="company_select" name="company_select" required>
+              <option value="">Select Company</option>
+              {% for company in company_list %}
+                <option value="{{ company.company_code }}">{{ company.company_code }}</option>
+              {% endfor %}
+            </select>
+            <label class="error" for="company_select" style="display:none;color:red;">Please select a company.</label>
+          </div>
+          <div class="mb-3" id="plant_code_div" style="display:none;">
+            <label for="plant_code" class="form-label">Plant Code</label>
+            <select class="form-control" id="plant_code" name="plant_code" required>
+              <option value="">Select Plant Code</option>
+              <!-- Plant options will be injected here -->
+            </select>
+            <label class="error" for="plant_code" style="display:none;color:red;">Please select a plant code.</label>
+          </div>
+          <div class="mb-3" id="line_code_div" style="display:none;">
+            <label for="line_code" class="form-label">Line Code</label>
+            <select class="form-control" id="line_code" name="line_code" required>
+              <option value="">Select Line Code</option>
+              <!-- Options will be injected here -->
+            </select>
+            <label class="error" for="line_code" style="display:none;color:red;">Please select a line code.</label>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <a href="{% url 'login_screen' %}" class="btn btn-secondary">Close</a>
+        <button type="button" class="btn btn-primary" id="submitCompanyInfo">Submit</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block javascript %}
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+
+<script>
+$(document).ready(function() {
+  var companyModal = new bootstrap.Modal(document.getElementById('companyModal'));
+  companyModal.show();
+
+  // Company select triggers plant AJAX
+  $('#company_select').change(function() {
+    var companyCode = $(this).val();
+    $('#plant_code_div').hide();
+    $('#plant_code').val('');
+    $('#plant_code').find('option:not(:first)').remove();
+    $('#line_code_div').hide();
+    $('#line_code').val('');
+    $('#line_code').find('option:not(:first)').remove();
+    if (companyCode) {
+      $.ajax({
+        url: '{% url "get_plants" %}',
+        data: { company_code: companyCode },
+        success: function(response) {
+          var plantSelect = $('#plant_code');
+          plantSelect.find('option:not(:first)').remove();
+          if (response.plants && response.plants.length > 0) {
+            $.each(response.plants, function(i, plant) {
+              plantSelect.append($('<option>', { value: plant, text: plant }));
+            });
+            $('#plant_code_div').show();
+          } else {
+            $('#plant_code_div').hide();
+            plantSelect.val('');
+          }
+        }
+      });
+    }
+  });
+
+  // Plant code triggers line AJAX
+  $('#plant_code').change(function() {
+    var companyCode = $('#company_select').val();
+    var plantCode = $(this).val();
+    var lineSelect = $('#line_code');
+    lineSelect.find('option:not(:first)').remove();
+    $('#line_code_div').hide();
+    $('#line_code').val('');
+    if (plantCode) {
+      $.ajax({
+        url: '{% url "get_lines" %}',
+        data: {
+          company_code: companyCode,
+          plant_code: plantCode
+        },
+        success: function(response) {
+          if (response.lines && response.lines.length > 0) {
+            $.each(response.lines, function(i, line) {
+              lineSelect.append($('<option>', { value: line, text: line }));
+            });
+            $('#line_code_div').show();
+          } else {
+            $('#line_code_div').hide();
+            lineSelect.val('');
+          }
+        }
+      });
+    }
+  });
+
+  // Form validation
+  $('#lineSelectionForm').validate({
+    errorClass: "error",
+    errorElement: "label",
+    rules: {
+      company_select: { required: true },
+      plant_code: { required: true },
+      line_code: { required: true }
+    },
+    messages: {
+      company_select: "Please select a company.",
+      plant_code: "Please select a plant code.",
+      line_code: "Please select a line code."
+    },
+    errorPlacement: function(error, element) {
+      error.insertAfter(element);
+    },
+    highlight: function(element) {
+      $(element).addClass("is-invalid");
+    },
+    unhighlight: function(element) {
+      $(element).removeClass("is-invalid");
+    }
+  });
+  // Submit button handler: validate, then redirect
+  $('#submitCompanyInfo').click(function() {
+    if ($('#lineSelectionForm').valid()) {
+      var company = $('#company_select').val();
+      var plant = $('#plant_code').val();
+      var line = $('#line_code').val();
+      // Change to your actual training_screen URL (with params if needed)
+      window.location.href = "{% url 'training_screen' %}?company=" + encodeURIComponent(company) +
+                             "&plant=" + encodeURIComponent(plant) +
+                             "&line=" + encodeURIComponent(line);
+    }
+  });
+});
+</script>
+{% endblock %}

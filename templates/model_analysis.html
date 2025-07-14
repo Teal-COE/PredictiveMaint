@@ -1,0 +1,236 @@
+{% extends "base.html" %}
+
+{% block title %}Predictive Maintenance {% endblock %}
+
+{% block content %}
+
+<div class="container-fluid">
+    <h1 class="mt-4"></h1>
+    <div class="d-flex justify-content-between align-items-center">
+
+
+    </div>
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title" style="font-size:30px">Model Analysis</h5>
+            <form method="post" id="ModelDataForm">
+                {% csrf_token %}
+                <div class="row align-items-end " >
+
+
+                    <!-- Sensor Name Dropdown -->
+                    <div class="col-md-3 form-group">
+                        <label for="element_id" class="form-label" style="font-size:1.2rem">Select Element</label>
+                        <select id="element_id" name="element_name" class="form-control" required>
+                            <option value="">Select an Element</option>
+                            {% for sensor in sensors %}
+                                <option value="{{ sensor.element_id }}">{{ sensor.element_name }}</option>
+                            {% endfor %}
+                        </select>
+
+                    </div>
+
+                    <!-- Loss Function Dropdown -->
+                    <div class="col-md-3 form-group">
+                        <label for="loss_function" class="form-label" style="font-size:1.2rem">Select Type</label>
+                        <select id="loss_function" name="loss_function" class="form-control" required>
+                            <option value="">Select an Element</option>
+                            <option value="loss">Loss</option>
+<!--                            <option value="accuracy">Accuracy</option>-->
+                        </select>
+
+                    </div>
+
+                    <div class="col-md-3 form-group">
+                        <label for="model" class="form-label" style="font-size:1.2rem">Model</label>
+                        <select id="model" name="model" class="form-control" required>
+                            <option value="">Select Model</option>
+                            <!-- Models will be populated dynamically via AJAX -->
+                        </select>
+
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="col-md-3 mb-5">
+                        <button type="submit" class="btn btn-primary w-80" id="getDataButton">Submit</button>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Chart Container (hidden initially) -->
+            <div class="chart-container" id="chartContainer" style="display: none;box-sizing: border-box;height: 490px;width:100%;">
+                <canvas id="chart" ></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block javascript %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<style>
+    .form-group .text-danger {
+    min-height: 1.25rem;  /* Reserve space for error */
+    display: block;
+    font-size: 0.875rem;
+}
+    .form-group {
+    position: relative;
+    min-height: 100px; /* Adjust as needed */
+}
+
+
+</style>
+<script>
+    $(document).ready(function() {
+
+        // Apply validation to the form
+        $("#ModelDataForm").validate({
+            errorClass: "text-danger",  // Error message color
+            errorElement: "span",  // Error message element
+            rules: {
+                element_name: {
+                    required: true  // Ensure the element is selected
+                },
+                loss_function: {
+                    required: true  // Ensure loss/accuracy is selected
+                },
+                model: {
+                    required: true  // Ensure model is selected
+                }
+            },
+            messages: {
+                element_name: {
+                    required: "Please select an element."
+                },
+                loss_function: {
+                    required: "Please select a loss function or accuracy."
+                },
+                model: {
+                    required: "Please select a model."
+                }
+            },
+            highlight: function(element) {
+                // Add a red border to the invalid fields
+                $(element).addClass('is-invalid').removeClass('is-valid');
+            },
+            unhighlight: function(element) {
+                // Remove red border and add green border to valid fields
+                $(element).removeClass('is-invalid').addClass('is-valid');
+            },
+            submitHandler: function(form, event) {
+                event.preventDefault();  // Prevent the form from submitting until AJAX is done
+
+                var elementName = $('#element_id').val();
+                var lossFunction = $('#loss_function').val();
+                var model_path = $('#model').val();
+                var csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
+
+                // Make the AJAX request
+                $.ajax({
+                    url: '{% url "model_evaluation" %}',  // URL to your Django view
+                    type: 'POST',
+                    data: {
+                        element_name: elementName,
+                        loss_function: lossFunction,
+                        model_path: model_path,
+                        csrfmiddlewaretoken: csrfToken  // CSRF token for security
+                    },
+                    success: function(response) {
+                       
+
+                        if (response && response.labels && response.data) {
+                            // Get the context for the <canvas> element
+                            var ctx = document.getElementById('chart').getContext('2d');
+
+                                    if (Chart.getChart(ctx)) {
+                                        Chart.getChart(ctx).destroy();
+                                    }
+
+                            var chart = new Chart(ctx, {
+                                type: 'line',
+                                data: {
+                                    labels: response.labels,  // Individual labels like 'Jan', 'Feb'
+                                    datasets: [{
+                                        label: response.title, // This is the legend for the line itself
+                                        data: response.data,
+                                        borderColor: 'rgba(75, 192, 192, 1)',
+                                        fill: false
+                                    }]
+                                },
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    scales: {
+                                        x: {
+                                            title: {
+                                                display: true,
+                                                // NAME YOUR X-AXIS TITLE HERE
+                                                text: 'Loss'
+                                            }
+                                        },
+                                        y: {
+                                            title: {
+                                                display: true,
+                                                // NAME YOUR Y-AXIS TITLE HERE
+                                                text: 'Sensor Values'
+                                            }
+                                        }
+                                    }
+                                }
+                            });
+
+                            // Show the chart container after data is successfully fetched
+                            $('#chartContainer').show();
+
+                            
+                        } else {
+                            console.error("Error: Invalid data received", response);
+                        }
+                    },
+                    error: function(error) {
+                        console.error("Error fetching chart data:", error);
+                    }
+                });
+            }
+        });
+
+        // Dynamic model loading based on selected element
+        $('#element_id').change(function() {
+            var element_id = $(this).val();
+
+            if (element_id) {
+                // Make AJAX request to get models for the selected element
+                $.ajax({
+                    url: '{% url "get_models" %}',  // Django URL to handle model fetching
+                    type: 'GET',
+                    data: {
+                        'element_id': element_id  // Pass the selected element_id
+                    },
+                    success: function(response) {
+                        // Clear and populate the model dropdown with fetched models
+                        $('#model').empty().append('<option value="">Select Model</option>');
+                        if (response.models && response.models.length > 0) {
+                            $.each(response.models, function(index, model_id) {
+                                $('#model').append('<option value="' + model_id + '">' + model_id + '</option>');
+                            });
+                        } else {
+                            $('#model').append('<option value="">No models available</option>');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.log("Error fetching models:", error);
+                        $('#model').empty().append('<option value="">Error loading models</option>');
+                    }
+                });
+            } else {
+                $('#model').empty().append('<option value="">Select Model</option>');
+            }
+        });
+    });
+</script>
+{% endblock %}

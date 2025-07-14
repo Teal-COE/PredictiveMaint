@@ -1,0 +1,307 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Predictive Maintenance
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <h1 class="mt-4"></h1>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title" style="font-size:30px">Prediction Screen</h5>
+
+            <form method="post" id="sensorDataForm">
+                {% csrf_token %}
+                <div class="row align-items-end">
+                    <div class="col-md-3 form-group">
+                        <label for="sensorName" class="form-label" style="font-size:1.2rem">Sensor Name</label>
+                        <select id="sensorName" name="sensor_name" class="form-control" required>
+                            <option value="">Select a Sensor</option>
+                            {% for sensor in sensors %}
+                                <option value="{{ sensor.element_id }}|{{ sensor.possible_prediction_nos }}">{{ sensor.element_name }} {{ sensor.possible_prediction_nos }}</option>
+                            {% endfor %}
+                        </select>
+
+                    </div>
+                    <div class="col-md-3 form-group">
+                        <label for="numberofpredications" class="form-label" style="font-size:1.2rem">Number of Predictions</label>
+                        <input type="number" placeholder="No of Predictions" id="numberofpredications" class="form-control" name="numberofpredications" required>
+
+                    </div>
+
+                    <!-- Added Checkbox Section -->
+                    <div class="col-md-3 mb-5">
+
+                        <button type="submit" class="btn btn-primary w-80" id="getDataButton">Submit</button>
+                    </div>
+                    <!-- Loading Spinner (Initially hidden) -->
+
+                    <!-- Aligning the Submit Button to the Right -->
+                    
+                </div>
+            </form>
+            <div id="loadingSpinner" class="text-center" style="display: none;">
+                <div class="bounce">
+                    <div class="bounce-ball"></div>
+                    <div class="bounce-ball"></div>
+                    <div class="bounce-ball"></div>
+                </div>
+                <p>Processing... Please wait.</p>
+            </div>
+
+            <!-- Chart Container (hidden initially) -->
+            <div class="chart-container" id="chartContainer" style="display: none;box-sizing: border-box;height: 465px;width:100%;">
+                <canvas id="chart" ></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascript %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+
+    .form-group .text-danger {
+    min-height: 1.25rem;  /* Reserve space for error */
+    display: block;
+    font-size: 0.875rem;
+}
+    .form-group {
+    position: relative;
+    min-height: 100px; /* Adjust as needed */
+}
+
+
+
+    /* Bouncing balls spinner CSS */
+    #loadingSpinner .bounce {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top:120px;
+    }
+
+    #loadingSpinner .bounce-ball {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background-color: #3498db;
+        margin: 0 5px;
+        animation: bounce 1.2s infinite ease-in-out;
+    }
+
+    #loadingSpinner .bounce-ball:nth-child(1) {
+        animation-delay: 0s;
+    }
+
+    #loadingSpinner .bounce-ball:nth-child(2) {
+        animation-delay: 0.1s;
+    }
+
+    #loadingSpinner .bounce-ball:nth-child(3) {
+        animation-delay: 0.2s;
+    }
+
+    @keyframes bounce {
+        0%, 100% {
+            transform: translateY(0);
+        }
+        50% {
+            transform: translateY(-15px);
+        }
+    }
+</style>
+
+<script>
+    $(document).ready(function () {
+
+    let possible_prediction_nos = 0;
+
+$("#sensorName").change(function () {
+    const selectedOption = $(this).find(":selected");
+    possible_prediction_nos = parseInt(selectedOption.val().split("|")[1]);
+
+    if (!isNaN(possible_prediction_nos)) {
+        $("#numberofpredications").rules("remove"); // Optional: remove old rules first
+        $("#numberofpredications").rules("add", {
+            required: true,
+            min: 1,
+            max: possible_prediction_nos,
+            messages: {
+                required: "Please enter the number of predictions.",
+                min: "The number of predictions must be at least 1.",
+                max: `The number of predictions must not exceed ${possible_prediction_nos}`
+            }
+        });
+    }
+});
+        // Form validation
+        $("#sensorDataForm").validate({
+            errorClass: "error text-danger",  // Apply 'text-danger' class to error messages
+            errorElement: "label",  // Error messages will be placed in <label> tags
+            rules: {
+                sensor_name: {
+                    required: true,  // Ensure a sensor is selected
+                },
+                numberofpredications: {
+                    required: true,  // Ensure the number of predictions is entered
+                    min: 1 ,
+                }
+            },
+            messages: {
+                sensor_name: {
+                    required: "Please select a sensor."  // Custom message for Sensor Name
+                },
+                numberofpredications: {
+                    required: "Please enter the number of predictions.",  // Custom message for Number of Predictions
+                    min: "The number of predictions must be at least 1.",
+                }
+            },
+            highlight: function (element, errorClass, validClass) {
+                // Highlight the input field with a red border when invalid
+                $(element).addClass('is-invalid').removeClass('is-valid');
+            },
+            unhighlight: function (element, errorClass, validClass) {
+                // Remove the red border when the input is valid
+                $(element).removeClass('is-invalid').addClass('is-valid');
+            },
+            submitHandler: function (form) {
+                event.preventDefault();
+
+                // Collect form data
+                var additionalFeature = $('#additionalFeature').prop('checked');
+                var numberofpredications = $('#numberofpredications').val();
+                var sensorName = $('#sensorName').val().split("|")[0];
+
+                // Show the spinner and disable the submit button
+                $('#loadingSpinner').show();  // Show the spinner
+                $('#getDataButton').prop('disabled', true);
+
+                // Validate inputs (optional)
+                if (!sensorName || !numberofpredications) {
+                    $('#responseMessage').html('Please fill out all fields.');
+                    $('#getDataButton').prop('disabled', false);
+                    $('#loadingSpinner').hide();  // Hide the spinner if validation fails
+                    return;
+                }
+
+                // AJAX request
+                $.ajax({
+                    url: '/predictive/run_predictions/',  // URL of the Django view
+                    type: 'POST',
+                    data: {
+                        sensor_name: sensorName,
+                        number_predications: numberofpredications,
+                        additionalFeature: additionalFeature,
+                        csrfmiddlewaretoken: $('input[name="csrfmiddlewaretoken"]').val() // CSRF token for security
+                    },
+                    success: function (response) {
+                        // Hide the spinner and re-enable the button
+                        $('#loadingSpinner').hide();  // Hide the spinner
+                        $('#getDataButton').prop('disabled', false);
+
+                        if (response.success) {
+                            $('#chartContainer').show();
+
+                            // var ctx = document.getElementById('chart').getContext('2d');
+                            var ctx = document.getElementById('chart').getContext('2d');
+
+                            if (Chart.getChart(ctx)) {
+                                Chart.getChart(ctx).destroy();
+                            }
+
+                            // Chart data and creation (same logic)
+                            const chartDataLabels = response.data.actual_data.map(data => data.time);
+                            const chartDataValues = response.data.actual_data.map(data => data.value);
+                            const with_actual = response.data.is_actual;
+
+                            const chartData1Labels = response.data.predictions.map(data => data.time);
+                            const chartData1Values = response.data.predictions.map(data => data.value);
+
+                            const temlist = [];
+                            let shiftedChartData1Values = [];  // Declare outside of if block
+
+                            if (with_actual) {
+                                for (let i = 0; i < (response.data.actual_data.length - response.data.predictions.length); i++) {
+                                    temlist.push(null); // Adds a null value to the array
+                                }
+                                shiftedChartData1Values = [...temlist, ...chartData1Values];
+                            } else {
+                                for (let i = 1; i < response.data.actual_data.length; i++) {
+                                    temlist.push(null); // Adds a null value to the array
+                                }
+                                shiftedChartData1Values = [...temlist, ...chartData1Values];
+                            }
+
+                            const shiftedChartData1Labels = [chartDataLabels[chartDataLabels.length - 1], ...chartData1Labels];
+
+                            // Combine labels and values for the final chart
+                            const mergedLabels = [...chartDataLabels, ...shiftedChartData1Labels];
+                            const mergedValues = [...chartDataValues, ...shiftedChartData1Values];
+
+                            const uniqueMergedValues = [...new Set(mergedLabels)];
+
+                            // Create chart
+                            var chart = new Chart(ctx, {
+                                type: 'line',
+                                data: {
+                                    labels: uniqueMergedValues,
+                                    datasets: [
+                                        {
+                                            label: "Actual Data",
+                                            data: chartDataValues,
+                                            borderColor: 'rgba(75, 192, 192, 1)',
+                                            fill: false,
+                                        },
+                                        {
+                                            label: "Predictions",
+                                            data: shiftedChartData1Values,
+                                            borderColor: 'rgba(255, 99, 132, 1)',
+                                            fill: false,
+                                        }
+                                    ]
+                                },
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    scales: {
+                                        x: {
+                                            title: {
+                                                display: true,
+                                                // NAME YOUR X-AXIS TITLE HERE
+                                                text: 'Timestamp'
+                                            }
+                                        },
+                                        y: {
+                                            title: {
+                                                display: true,
+                                                // NAME YOUR Y-AXIS TITLE HERE
+                                                text: 'Sensor Values'
+                                            }
+                                        }
+                                    }
+                                }
+                            });
+                        } else {
+                            $('#responseMessage').html('<span class="text-danger">Error fetching data.</span>');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        $('#loadingSpinner').hide();
+                        $('#getDataButton').prop('disabled', false);
+                        $('#responseMessage').html('<span class="text-danger">An error occurred while fetching data. Please try again.</span>');
+                        console.error('Error:', error);
+                        $('#chartContainer').hide(); // Hide chart on error
+                    }
+                });
+            }
+        });
+    });
+</script>
+{% endblock %}

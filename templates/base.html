@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+  <!-- Meta Configuration -->
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+  <!-- Page Title -->
+  <title>{% block title %}Predictive Maintenance{% endblock %}</title>
+
+  <!-- Base Styles and Favicon -->
+  <link href="{% static 'css/styles.css' %}" rel="stylesheet" />
+  <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}" />
+
+  <!-- External CSS Libraries -->
+  <link href="{% static 'css/sweetalert2.min.css' %}" rel="stylesheet" />
+
+
+  <!-- External JS Libraries -->
+  <script src="{% static 'js/all.min.js' %}" crossorigin="anonymous"></script>
+  <script src="{% static 'js/chart.js' %}"></script>
+  <script src="{% static 'js/d3.v7.min.js ' %} "></script>
+ {% block extra_css %}{% endblock %}
+  <!-- Inline Custom Styles -->
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-size: cover;
+      background-repeat: no-repeat;
+      height: 100vh;
+    }
+
+    .line {
+      fill: none;
+      stroke: steelblue;
+      stroke-width: 2px;
+    }
+
+    .label {
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .axis path,
+    .axis line {
+      fill: none;
+      shape-rendering: crispEdges;
+    }
+
+    .axis text {
+      font-size: 12px;
+    }
+
+    .chart-container {
+      margin-top: 20px;
+    }
+  </style>
+
+
+  <!-- Extra Head Content from Child Templates -->
+  {% block extra_head %}{% endblock %}
+</head>
+
+<body class="sb-nav-fixed">
+    {% if show_nav %}
+        {% include 'partials/navbar.html' %}
+        <div id="layoutSidenav">
+          {% include 'partials/sidebar.html' %}
+            <div id="layoutSidenav_content">
+    {% endif %}
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    {% if show_nav %}
+            {% include 'partials/footer.html' %}
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- Scripts -->
+    <script src="{% static 'js/jquery-3.6.0.min.js' %}" crossorigin="anonymous"></script>
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}" crossorigin="anonymous"></script>
+    <script src="{% static 'js/sweetalert2.all.min.js' %}"></script>
+    <script src="{% static 'js/scripts.js' %}"></script>
+    {% block javascript %}{% endblock %}
+</body>
+</html>
