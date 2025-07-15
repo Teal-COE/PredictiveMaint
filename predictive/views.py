@@ -41,7 +41,7 @@ MODEL_MAIN_PATH = 'all_models/'
 ANOMALY_VARIABLES = {}
 HOUR_MODE = False
 
-
+@login_required(login_url='login_screen')
 def get_lines(request):
     company_code = request.GET.get('company_code')
     plant_code = request.GET.get('plant_code')
@@ -53,7 +53,7 @@ def get_lines(request):
         lines = [l['line_code'] for l in lines_qs]
     return JsonResponse({'lines': lines})
 
-
+@login_required(login_url='login_screen')
 def plant_code(request):
     if request.method == "POST":
         data = json.loads(request.body)
@@ -66,7 +66,7 @@ def plant_code(request):
         return JsonResponse({"success": True})
     return JsonResponse({"success": False}, status=400)
 
-
+@login_required(login_url='login_screen')
 def get_plants(request):
     company_code = request.GET.get('company_code')
     print(company_code, 'company_code')
@@ -76,7 +76,7 @@ def get_plants(request):
         plants = [p['plant_code'] for p in plants_qs]
     return JsonResponse({'plants': plants})
 
-
+@login_required(login_url='login_screen')
 def dashboard(request):
     company_list = []
     if request.session.get('show_company_modal'):
@@ -86,7 +86,7 @@ def dashboard(request):
         print(company_list, 'company_list')
     return render(request, "dashboard.html", {'company_list': company_list})
 
-
+@login_required(login_url='login_screen')
 def get_startdate(request):
     if request.method == "GET" and request.headers.get('x-requested-with') == 'XMLHttpRequest':
         element_id = request.GET.get('sensor_name')

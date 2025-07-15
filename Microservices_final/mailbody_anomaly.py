@@ -7,7 +7,7 @@ import inspect
 import json
 
 login_creds = {"username": "admin", "password": "LastDance"}
-server_ip = "127.0.0.1:8000"
+server_ip = "127.0.0.1:9001"
 generate_token_url = f"http://{server_ip}/predictive/token/"
 get_anomaly_url = f"http://{server_ip}/predictive/anamoly_records/"
 error_log_url = f"http://{server_ip}/predictive/error_log/"

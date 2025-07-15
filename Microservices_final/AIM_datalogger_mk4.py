@@ -24,9 +24,9 @@ import inspect
 warnings.filterwarnings("ignore")
 init(autoreset=True)
 
-login_creds = {"username": "admin", "password": "LastDance"}
+login_creds = {"username": "admin", "password": "Admin@123"}
 
-server_ip = "127.0.0.1:8000"
+server_ip = "127.0.0.1:9001"
 
 generate_token_url = f"http://{server_ip}/predictive/token/"
 
@@ -376,7 +376,9 @@ class sensor_creator:
 
 
 if __name__ == "__main__":
-    config_file = r'D:\TEAL\PredictiveMaint\PredictiveMaintenance\Microservices_final\AIM_datalogger_config.json'
+
+    config_file = r'D:\TEAL\PM20250714\PredictiveMaint\Microservices_final\AIM_datalogger_config.json'
+    
     if os.path.exists(config_file):
         config = json.loads(open(config_file).read())
         login_creds = {"username": config["username"], "password": config["password"]}
