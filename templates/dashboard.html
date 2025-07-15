@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 {% load static %}
+
 {% block title %}Login{% endblock %}
+
 {% block content %}
 <div class="modal fade" id="companyModal" tabindex="-1" aria-labelledby="companyModalLabel" aria-hidden="true">
   <div class="modal-dialog">
@@ -13,10 +15,13 @@
           <div class="mb-3">
             <label for="company_select" class="form-label">Company Select</label>
             <select class="form-control" id="company_select" name="company_select" required>
+              
               <option value="">Select Company</option>
+
               {% for company in company_list %}
                 <option value="{{ company.company_code }}">{{ company.company_code }}</option>
               {% endfor %}
+              
             </select>
             <label class="error" for="company_select" style="display:none;color:red;">Please select a company.</label>
           </div>
@@ -48,6 +53,7 @@
 {% endblock %}
 
 {% block javascript %}
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
 <script>
 $(document).ready(function() {
@@ -138,6 +144,7 @@ $(document).ready(function() {
       $(element).removeClass("is-invalid");
     }
   });
+
   // Submit button handler: validate, then redirect
   $('#submitCompanyInfo').click(function() {
     if ($('#lineSelectionForm').valid()) {
