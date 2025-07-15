@@ -4,7 +4,7 @@ from predictive import views as pred
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 urlpatterns = [
-    path('login_screen/', pred.login_screen, name='login_screen'),
+    path('', pred.login_screen, name='login_screen'),
     path('dashboard/', pred.dashboard, name='dashboard'),
     path('get_plants/', pred.get_plants, name='get_plants'),
     path('get_lines/', pred.get_lines, name='get_lines'),
@@ -25,18 +25,19 @@ urlpatterns = [
     path('sensor_list/', pred.sensor_list, name='sensor_list'),
     path('sensor_create', pred.sensors_create, name='sensor_create'),
     path('sensor_update/<int:id>/', pred.update_sensor, name='sensor_update'),
-
     path('sensor_delete/<int:id>/', pred.delete_sensor, name='sensor_delete'),
 
     path('anomaly/', pred.anomaly_view, name='anomaly_view'),
-    path('task/<int:id>/delete/', pred.delete_anomaly, name='deleteA'),
+
+    path('training_screen/', pred.training_screen, name='training_screen'),
 
     path('get_startdate/', pred.get_startdate, name='get_startdate'),
 
     path('predictive_screen/', pred.predictive_screen, name='predictive_screen'),
     path('run_predictions/', pred.run_predictions, name='ajax_predictive_screen-data'),
     path('run_predictions1/', pred.run_predictions1, name='ajax_predictive'),
-    path('training_screen/', pred.training_screen, name='training_screen'),
+
+   
     path('model_analysis/', pred.model_analysis, name='model_analysis'),
     path('get_models/', pred.get_models, name='get_models'),
     path('model_analysis_chart/', pred.model_evaluation, name='model_evaluation'),

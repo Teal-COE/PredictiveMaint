@@ -729,10 +729,7 @@ def anomaly_view(request):
     return render(request, 'anomaly.html', {'page_obj': page_obj, 'show_nav': True, **sidebar_counts})
 
 
-def delete_anomaly(request, id):
-    anomaly = AnomalyDataLog.objects.get(id=id)
-    anomaly.delete()
-    return redirect('anomaly_view')
+
 
 
 def organization_list(request):
