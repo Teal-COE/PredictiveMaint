@@ -1,5 +1,7 @@
 {% extends "base.html" %}
-{% block title %}Predictive Maintenance {% endblock %}
+{% load static %}
+
+{% block title %}Training Screen {% endblock %}
 
 {% block content %}
 <div class="container-fluid">
@@ -102,13 +104,15 @@
     </div>
 </div>
 
-{% endblock %}{% block javascript %}
-
-<!-- Bootstrap JS Bundle (includes Popper) -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+{% endblock %}
 
 
+
+{% block javascript %}
+
+<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+
+<script src="{% static 'js/jquery.validate.min.js' %}"></script>
 
 <style>
 
@@ -165,8 +169,6 @@
 </style>
 
 <script>
-
-
     $(document).ready(function () {
     $('#sensorName').on('change', function () {
         const selected = $(this).find(':selected');
@@ -183,7 +185,6 @@
         }
     });
 });
-
 
     $(document).ready(function () {
     // Custom validation method to ensure end_datetime is greater than start_datetime
