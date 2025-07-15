@@ -1,13 +1,14 @@
 import json
 import os
-
 import requests
 import schedule
-
 import time
 import datetime
 
-from . import mailbody_anomaly
+#from . import mailbody_anomaly
+#from Microservices_final import mailbody_anomaly
+
+import mailbody_anomaly
 
 config = {'60'}
 server_ip = "127.0.0.1:9001"

@@ -46,6 +46,7 @@ service = "DataLog"
 
 def color_printer(type,data):
     type_dict = {"thread": Fore.CYAN , "error": Fore.RED , "request": Fore.MAGENTA , "troubleshoot": Fore.YELLOW ,"opcua":Fore.GREEN}
+    
     print(type_dict[type]+"["+get_timestamp()+"] "+type+" " + data  + Fore.WHITE)
 
 
