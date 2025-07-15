@@ -8,9 +8,13 @@ import traceback
 
 
 sensor_config = {'Vibration_sensor':'3'}
+
 end_point = "opc.tcp://192.168.119.1:4840"
+
 last_value = {}
+
 IFM_ip = '192.168.119.101'
+
 def get_sensor_value(sensor_name):
     try:
         res = requests.get(f'http://{IFM_ip}/iolinkmaster/port[{sensor_config[sensor_name]}]/iolinkdevice/pdin/getdata')

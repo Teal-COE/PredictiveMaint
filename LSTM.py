@@ -14,7 +14,6 @@ import regex as re
 import json
 import shutil
 
-
 def anamoly_limits(data, multiplier=3):
     try:
         data = sorted(data)
