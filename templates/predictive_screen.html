@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% load static %}
+
 {% block title %}
     Predictive Maintenance
 {% endblock %}
@@ -16,7 +18,7 @@
                 {% csrf_token %}
                 <div class="row align-items-end">
                     <div class="col-md-3 form-group">
-                        <label for="sensorName" class="form-label" style="font-size:1.2rem">Sensor Name</label>
+                        <label for="sensorName" class="form-label">Sensor Name</label>
                         <select id="sensorName" name="sensor_name" class="form-control" required>
                             <option value="">Select a Sensor</option>
                             {% for sensor in sensors %}
@@ -26,7 +28,7 @@
 
                     </div>
                     <div class="col-md-3 form-group">
-                        <label for="numberofpredications" class="form-label" style="font-size:1.2rem">Number of Predictions</label>
+                        <label for="numberofpredications" class="form-label">Number of Predictions</label>
                         <input type="number" placeholder="No of Predictions" id="numberofpredications" class="form-control" name="numberofpredications" required>
 
                     </div>
@@ -61,10 +63,11 @@
 {% endblock %}
 
 {% block javascript %}
-
+<script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
+<script src="{% static 'js/jquery.validate.min.js' %}"></script>
+<script src="{% static 'js/chart.min.js' %}"></script>
 
 <style>
-
     .form-group .text-danger {
     min-height: 1.25rem;  /* Reserve space for error */
     display: block;
@@ -74,9 +77,6 @@
     position: relative;
     min-height: 100px; /* Adjust as needed */
 }
-
-
-
     /* Bouncing balls spinner CSS */
     #loadingSpinner .bounce {
         display: flex;

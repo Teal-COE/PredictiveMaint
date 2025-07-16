@@ -855,7 +855,6 @@ def email_delete(request, id):
     email.delete()
     return redirect('email_list')
 
-
 def summary_list(request):
     latest_question_list = SettingsElement.objects.all()
     paginator = Paginator(latest_question_list, 10)  # Show 10 sensors per page
@@ -893,8 +892,6 @@ def get_models(request):
         return JsonResponse({'error': str(e)}, status=500)
 
 
-@login_required
-@never_cache
 def model_analysis(request):
     sensors = SettingsElement.objects.filter(prediction=True, org_id=request.session.get('ORG_ID')).order_by(
         '-element_id')

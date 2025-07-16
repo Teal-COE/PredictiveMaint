@@ -17,12 +17,18 @@
 
   <!-- External CSS Libraries -->
   <link href="{% static 'css/sweetalert2.min.css' %}" rel="stylesheet" />
-
-  <!-- External JS Libraries -->
   <script src="{% static 'js/all.min.js' %}" crossorigin="anonymous"></script>
   <script src="{% static 'js/chart.js' %}"></script>
-  <script src="{% static 'js/d3.v7.min.js ' %} "></script>
- {% block extra_css %}{% endblock %}
+  <script src="{% static 'js/d3.v7.min.js' %}"></script> <!-- Removed space -->
+
+  <!-- Load offline jQuery and Validation plugin (local files) -->
+
+
+
+ {% block extra_css %}
+
+ 
+ {% endblock %}
   <!-- Inline Custom Styles -->
   <style>
     body {
@@ -62,7 +68,6 @@
   <!-- Extra Head Content from Child Templates -->
   {% block extra_head %}{% endblock %}
 </head>
-
 <body class="sb-nav-fixed">
     {% if show_nav %}
         {% include 'partials/navbar.html' %}

@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-
+{% load static %}
 {% block title %}Predictive Maintenance {% endblock %}
 
 {% block content %}
@@ -7,8 +7,6 @@
 <div class="container-fluid">
     <h1 class="mt-4"></h1>
     <div class="d-flex justify-content-between align-items-center">
-
-
     </div>
     <div class="card mb-4">
         <div class="card-body">
@@ -16,11 +14,9 @@
             <form method="post" id="ModelDataForm">
                 {% csrf_token %}
                 <div class="row align-items-end " >
-
-
                     <!-- Sensor Name Dropdown -->
                     <div class="col-md-3 form-group">
-                        <label for="element_id" class="form-label" style="font-size:1.2rem">Select Element</label>
+                        <label for="element_id" class="form-label">Select Element</label>
                         <select id="element_id" name="element_name" class="form-control" required>
                             <option value="">Select an Element</option>
                             {% for sensor in sensors %}
@@ -29,20 +25,19 @@
                         </select>
 
                     </div>
-
                     <!-- Loss Function Dropdown -->
                     <div class="col-md-3 form-group">
-                        <label for="loss_function" class="form-label" style="font-size:1.2rem">Select Type</label>
+                        <label for="loss_function" class="form-label">Select Type</label>
                         <select id="loss_function" name="loss_function" class="form-control" required>
                             <option value="">Select an Element</option>
                             <option value="loss">Loss</option>
-<!--                            <option value="accuracy">Accuracy</option>-->
+                            <option value="accuracy">Accuracy</option>
                         </select>
 
                     </div>
 
                     <div class="col-md-3 form-group">
-                        <label for="model" class="form-label" style="font-size:1.2rem">Model</label>
+                        <label for="model" class="form-label">Model</label>
                         <select id="model" name="model" class="form-control" required>
                             <option value="">Select Model</option>
                             <!-- Models will be populated dynamically via AJAX -->
@@ -69,6 +64,10 @@
 
 {% block javascript %}
 
+<script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
+<script src="{% static 'js/jquery.validate.min.js' %}"></script>
+<script src="{% static 'js/chart.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
 
 <style>
     .form-group .text-danger {
