@@ -74,27 +74,28 @@ WSGI_APPLICATION = 'AIMaintenance.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'mssql',
+        'NAME': 'PM',  # Your local database name
+        'USER': 'sa',  # Your SQL Server username
+        'PASSWORD': 'admin@123',  # Your SQL Server password
+        'HOST': 'localhost',  # Use 'localhost' or '127.0.0.1' for local DB
+        'PORT': '1433',  # Default SQL Server port
+        'OPTIONS': {
+            'driver': 'ODBC Driver 17 for SQL Server',
+            'extra_params': 'TrustServerCertificate=yes;',
+        },
     }
 }
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'sql_server.pyodbc',
-#         'NAME': 'PredictiveMaintainance',         # Database name
-#         'USER': 'sa',              # SQL Server username
-#         'PASSWORD': 'Teal@123',          # SQL Server password
-#         'HOST': r'localhost\SQLEXPRESS',       # For local, you can use 'localhost' or '127.0.0.1'
-#         'PORT': '',                           # Default port (1433) is often fine
-#         'OPTIONS': {
-#             'driver': 'ODBC Driver 17 for SQL Server',  # Ensure the correct driver is installed
-#             'extra_params': 'TrustServerCertificate=yes;',  # Optional for self-signed certificates
-#         },
-#     }
-# }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators

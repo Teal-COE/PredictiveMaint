@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 
-{% block title %}Predictive Maintenance{% endblock %}
+{% load static %}
+
+{% block title %}Sensor list{% endblock %}
 
 {% block content %}
 <div class="container-fluid">
@@ -107,11 +109,11 @@
     </div>
 </div>
 {% endblock %}
+
 {% block javascript %}
 
 
 <script>
-
     $(document).ready(function () {
     $('.delete-btn').on('click', function () {
         const url = $(this).data('url');
