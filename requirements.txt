@@ -4,7 +4,7 @@ astunparse==1.6.3
 certifi==2024.12.14
 charset-normalizer==3.4.1
 colorama==0.4.6
-Django==5.1.4
+Django==5.0.14
 djangorestframework==3.15.2
 djangorestframework_simplejwt==5.4.0
 flatbuffers==24.12.23
@@ -22,6 +22,7 @@ markdown-it-py==3.0.0
 MarkupSafe==3.0.2
 mdurl==0.1.2
 ml-dtypes==0.4.1
+mssql-django==1.5
 namex==0.0.8
 numpy==2.0.2
 opcua==0.98.13
@@ -33,6 +34,7 @@ protobuf==5.29.3
 psycopg2-binary==2.9.10
 Pygments==2.19.1
 PyJWT==2.10.1
+pyodbc==5.2.0
 python-dateutil==2.9.0.post0
 pytz==2024.2
 regex==2024.11.6
