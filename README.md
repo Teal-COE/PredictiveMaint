@@ -54,7 +54,7 @@ predictive_maintenance/
 └── templates/
 └── app_name/
 
----
+
 
 ## 🚀 Quick Start – Setup Guide
 
@@ -165,6 +165,10 @@ Set up ALLOWED_HOSTS
 Use HTTPS and secure headers
 
 Serve static files via Nginx
+
+
+
+
 
 🧑‍💻 Developer
 Akash T S
