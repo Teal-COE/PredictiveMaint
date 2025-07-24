@@ -32,6 +32,17 @@
                         Prediction Screen 
                     </a>
 
+                     <a class="nav-link {% if request.resolver_match.url_name == 'anomaly_view' %}active{% endif %}"
+                       href="{% url 'anomaly_view' %}" style="color: #ecf0f1;">
+                        <div class="sb-nav-link-icon" style="color: #ecf0f1;">
+                            <i class="fas fa-bell"></i> <!-- Changed icon to "users" -->
+                        </div>
+                        <span>Anomaly View  </span>
+                            {% if anomaly_count %}
+                                <div class="badge bg-white text-danger ml-2"> {{ anomaly_count }}</div>
+                            {% endif %}
+                    </a>
+
                     <a class="nav-link {% if request.resolver_match.url_name == 'sensor_list' %}active{% endif %}"
                        href="{% url 'sensor_list' %}" style="color: #ecf0f1;">
                         <div class="sb-nav-link-icon" style="color: #ecf0f1;">
@@ -42,16 +53,7 @@
                                 <div class="badge bg-white text-danger ml-2"> {{ sensor_count }}</div>
                             {% endif %}
                     </a>
-                    <a class="nav-link {% if request.resolver_match.url_name == 'anomaly_view' %}active{% endif %}"
-                       href="{% url 'anomaly_view' %}" style="color: #ecf0f1;">
-                        <div class="sb-nav-link-icon" style="color: #ecf0f1;">
-                            <i class="fas fa-bell"></i> <!-- Changed icon to "users" -->
-                        </div>
-                        <span>Anomaly View  </span>
-                            {% if anomaly_count %}
-                                <div class="badge bg-white text-danger ml-2"> {{ anomaly_count }}</div>
-                            {% endif %}
-                    </a>
+                
                   <!-- SETTINGS COLLAPSE LINK -->
                   <a class="nav-link" href="#" id="settingsToggle" style="color: #ecf0f1;">
                   <div class="sb-nav-link-icon" style="color: #ecf0f1;">

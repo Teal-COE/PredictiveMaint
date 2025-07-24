@@ -11,7 +11,8 @@ import datetime
 import mailbody_anomaly
 
 config = {'60'}
-server_ip = "127.0.0.1:9001"
+server_ip = "127.0.0.1:8000"  # Default server IP
+# Load server IP from config file if it exists
 config_file = 'D:\TEAL\PM20250714\PredictiveMaint\Microservices_final\AIM_datalogger_config.json'
 
 if os.path.exists(config_file):
@@ -23,6 +24,7 @@ def hourly_prediciton_trigger():
 
 def exception_job():
     res = requests.post(f"http://{server_ip}/predictive/exception_job/")
+    
     print(f"[{datetime.datetime.now()}] {res.json}")
 
 schedule.every(10).minutes.do(mailbody_anomaly.analyse_anomaly)

@@ -6,8 +6,8 @@ import traceback
 import inspect
 import json
 
-login_creds = {"username": "admin", "password": "LastDance"}
-server_ip = "127.0.0.1:9001"
+login_creds = {"username": "admin", "password": "Admin@123"}
+server_ip = "127.0.0.1:8000"  # Default server IP
 generate_token_url = f"http://{server_ip}/predictive/token/"
 get_anomaly_url = f"http://{server_ip}/predictive/anamoly_records/"
 error_log_url = f"http://{server_ip}/predictive/error_log/"
@@ -55,6 +55,7 @@ def exception_logger(exp_type,exp_severity,exp_shrt,exp_json):
             except:
                 pass
     except Exception as e:
+
         print(get_timestamp()+" >> "+ "---handled1---")
         traceback.print_exc()
 
@@ -163,7 +164,7 @@ def analyse_anomaly():
         # traceback.print_exc()
 
 if __name__=="__main__":
-    config_file = 'D:\PredictiMach\PredictiveMaintenance\Microservices_final\AIM_datalogger_config.json'
+    config_file = 'D:\TEAL\PM20250714\PredictiveMaint\Microservices_final\AIM_datalogger_config.json'
     if os.path.exists(config_file):
         config = json.loads(open(config_file).read())
         login_creds = {"username": config["username"], "password": config["password"]}

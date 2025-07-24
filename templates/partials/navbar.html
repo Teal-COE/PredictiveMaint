@@ -1,10 +1,10 @@
 <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
-    <a class="navbar-brand" href="#">Predictive Maintenance</a>
+    <a class="navbar-brand" href="#">Predictive Maintenance</a> 
     <button class="btn btn-link btn-sm order-1 order-lg-0" id="sidebarToggle" href="#">
         <i class="fas fa-bars"></i>
     </button>
 
-    <div class="d-flex align-items-center ml-auto mr-3 text-white">
+    <div class="d-flex align-items-center ml-auto mr-3 text-white"> 
         {% if request.session.selected_company %}
             <span><b>Company:</b> {{ request.session.selected_company }}</span>&nbsp;
         {% endif %}
@@ -15,14 +15,36 @@
             <span><b>Line:</b> {{ request.session.selected_line }}</span>&nbsp;
         {% endif %}
         <span id="india-time" class="ml-3"></span>
+        
     </div>
 
-    <div>
-        <a href="{% url 'login_screen' %}" class="btn btn-danger btn-sm ml-2">Logout</a>
-    </div>
+ <button class="btn btn-danger btn-sm" onclick="confirmLogout()">Logout</button>
+
+
 </nav>
 
+
 <script>
+
+function confirmLogout() {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "You will be logged out.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Yes, logout'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = "{% url 'login_screen' %}";
+        }
+    });
+}
+</script>
+
+<script>
+// Function to update the time in India (IST)
 function updateIndiaTime() {
     const now = new Date();
     // Calculate IST (UTC+5:30)

@@ -2,7 +2,6 @@
 '''
 Diffrence in mk3 and mk4 version : added exception handling
 '''
-
 import time
 import threading
 import datetime
@@ -22,11 +21,12 @@ import inspect
 #troubleshooting - yellow
 
 warnings.filterwarnings("ignore")
+
 init(autoreset=True)
 
 login_creds = {"username": "admin", "password": "Admin@123"}
 
-server_ip = "127.0.0.1:9001"
+server_ip = "127.0.0.1:8000"
 
 generate_token_url = f"http://{server_ip}/predictive/token/"
 
@@ -35,7 +35,6 @@ get_plc_nos = f"http://{server_ip}/predictive/datalog_sensor/"
 error_log_url = f"http://{server_ip}/predictive/error_log/"
 
 data_log_url = f"http://{server_ip}/predictive/datalog/"
-
 
 
 globals()['res_json'] = {}
