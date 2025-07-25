@@ -1,7 +1,6 @@
 from rest_framework import serializers
 from .models import *
 
-
 class SensorDataLogSerializer(serializers.ModelSerializer):
     class Meta:
         model = SensorDataLog

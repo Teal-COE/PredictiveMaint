@@ -1414,7 +1414,7 @@ def exception_job(requests):
             """
 
         reply = send_email_to_multiple_recipients("AIM Exception Mails for Developer", email_body,
-                                                  {"to": "faj@titan.co.in"})
+                                                  {"to": "akashadi@titan.ci.in"})
         return JsonResponse(reply, safe=False)
     except Exception as e:
         return JsonResponse(str(e), safe=False)
