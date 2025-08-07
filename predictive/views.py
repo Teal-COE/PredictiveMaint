@@ -1307,7 +1307,7 @@ def anomaly_logger(sender, instance, created, **kwargs):
         element_id=instance.element_id
     ).values(
         'element_name', 'upper_anamoly_limit', 'lower_anamoly_limit',
-        'prediction', 'aggregation_type'
+        'prediction', 'aggregation_type', 'machine_code'
     ).first()
 
     if not setting_data or setting_data["lower_anamoly_limit"] == 'model not created':
@@ -1319,6 +1319,7 @@ def anomaly_logger(sender, instance, created, **kwargs):
     try:
         lower = float(setting_data['lower_anamoly_limit'])
         upper = float(setting_data['upper_anamoly_limit'])
+        machine_code = setting_data['machine_code'] 
         current_value = float(instance.max)
     except (ValueError, TypeError):
         return  # Exit if conversion fails
@@ -1349,7 +1350,7 @@ def anomaly_logger(sender, instance, created, **kwargs):
                 no_of_records=instance.no_of_records,
                 org_id=instance.org_id,
                 anomaly_ranges=f"{lower} to {upper}",
-                machine='M19'
+                machine= machine_code,
             )
 
 
