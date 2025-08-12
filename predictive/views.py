@@ -713,18 +713,29 @@ def sensor_import(request):
 
     return render(request, 'sensordeatils/import_csv.html')
 
+from collections import defaultdict
 
 ################### end  sensor   #########################
 def anomaly_view(request):
-    latest_question_list = AnomalyDataLog.objects.filter(org_id=request.session.get('ORG_ID'))
+    # Fetch and order data by machine
+    data = AnomalyDataLog.objects.filter(
+        org_id=request.session.get('ORG_ID')
+    ).order_by('machine')
 
-    paginator = Paginator(latest_question_list, 10)  # Show 10 sensors per page
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    # Group data by machine using defaultdict
+    grouped_by_machine = defaultdict(list)
+    for row in data:
+        grouped_by_machine[row.machine].append(row)
+
+    # Get sidebar counts (assumes it's a dict)
     sidebar_counts = get_sidebar_counts(request)
-    return render(request, 'anomaly.html', {'page_obj': page_obj, 'show_nav': True, **sidebar_counts})
 
-
+    # Pass grouped data and other context to template
+    return render(request, 'anomaly.html', {
+        'grouped_data': grouped_by_machine.items(),  # converts to list of tuples
+        'show_nav': True,
+        **sidebar_counts
+    })
 
 
 

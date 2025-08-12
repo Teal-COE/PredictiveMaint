@@ -11,61 +11,62 @@
   <div class="table-responsive">
     <table class="table table-striped table-bordered table-hover w-100">
 
-      <tbody>
-        {% regroup page_obj by machine as machine_list %}
-        {% for machine in machine_list %}
-        <!-- Machine Row (collapsible header) -->
-        <tr class="table-primary" data-toggle="collapse" data-target="#machine-{{ forloop.counter }}" aria-expanded="false" aria-controls="machine-{{ forloop.counter }}" style="cursor:pointer;">
-          <td colspan="9">
-            <strong>Machine: {{ machine.grouper }}</strong>
-            <span class="float-right">Anomalies: {{ machine.list|length }}</span>
-          </td>
-        </tr>
-        <!-- Collapsible Anomaly Rows -->
-        <tr class="collapse" id="machine-{{ forloop.counter }}">
-          <td colspan="9" style="padding:0; border:none;">
-            <table class="table mb-0">
-              <thead class="thead-light">
-        <tr>
-          <th>Element Name</th>
-          <th>LSL</th>
-          <th>Current value</th>
-          <th>Status</th>
-          <th>HSL</th>
-          <th>Machine</th>
-          <th>Aggregation Type</th>
-          <th>Start Time</th>
-          <th>Duration</th>
-        </tr>
-      </thead>
-              <tbody>
-              {% for sensor in machine.list %}
-                <tr>
-                  <td>{{ sensor.element_name }}</td>
-                  <td>{{ sensor.lsl|floatformat:3 }}</td>
-                  <td>{{ sensor.current_value }}</td>
-                  <td>
-                    {% if sensor.current_value < sensor.lsl %}
-                      <span style="color: orange;">LSL</span>
-                    {% elif sensor.current_value > sensor.hsl %}
-                      <span style="color: red;">HSL</span>
-                    {% else %}
-                      <span style="color: green;">(Normal)</span>
-                    {% endif %}
-                  </td>
-                  <td>{{ sensor.hsl|floatformat:3 }}</td>
-                  <td>{{ sensor.machine }}</td>
-                  <td>{{ sensor.aggregation_type }}</td>
-                  <td class="timestamp-cell">{{ sensor.time_stamp }}</td>
-                  <td class="duration-cell"> </td>
-                </tr>
-              {% endfor %}
-              </tbody>
-            </table>
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
+ <tbody>
+  {% for machine, sensors in grouped_data %}
+    <!-- Machine Header Row -->
+    <tr class="table-primary" data-toggle="collapse" data-target="#machine-{{ forloop.counter }}" aria-expanded="false" aria-controls="machine-{{ forloop.counter }}" style="cursor:pointer;">
+      <td colspan="9">
+        <strong>Machine: {{ machine }}</strong>
+        <span class="float-right">Anomalies: {{ sensors|length }}</span>
+      </td>
+    </tr>
+
+    <!-- Collapsible Sensor Rows -->
+    <tr class="collapse" id="machine-{{ forloop.counter }}">
+      <td colspan="9" style="padding:0; border:none;">
+        <table class="table mb-0">
+          <thead class="thead-light">
+            <tr>
+              <th>Element Name</th>
+              <th>LSL</th>
+              <th>Current Value</th>
+              <th>Status</th>
+              <th>HSL</th>
+              <th>Machine</th>
+              <th>Aggregation Type</th>
+              <th>Start Time</th>
+              <th>Duration</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for sensor in sensors %}
+              <tr>
+                <td>{{ sensor.element_name }}</td>
+                <td>{{ sensor.lsl|floatformat:3 }}</td>
+                <td>{{ sensor.current_value }}</td>
+                <td>
+                  {% if sensor.current_value < sensor.lsl %}
+                    <span style="color: orange;">LSL</span>
+                  {% elif sensor.current_value > sensor.hsl %}
+                    <span style="color: red;">HSL</span>
+                  {% else %}
+                    <span style="color: green;">(Normal)</span>
+                  {% endif %}
+                </td>
+                <td>{{ sensor.hsl|floatformat:3 }}</td>
+                <td>{{ sensor.machine }}</td>
+                <td>{{ sensor.aggregation_type }}</td>
+                <td class="timestamp-cell">{{ sensor.time_stamp }}</td>
+                <td class="duration-cell"></td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </td>
+    </tr>
+  {% endfor %}
+</tbody>
+
     </table>
   </div>
         </div>
