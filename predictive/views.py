@@ -178,7 +178,7 @@ def login_screen(request):
 
 
 @api_view(['POST'])
-def run_predictions(request):
+def run_predictionsAkash(request):
     is_api_call = False
     if request.method == 'POST':
         params = {
@@ -186,7 +186,6 @@ def run_predictions(request):
             'no_of_prediction': request.POST.get('number_predications'),
             'with_actual': request.POST.get('additionalFeature'),
         }
-
         if params['element_id'] is None:
             is_api_call = True
             params = {
@@ -194,11 +193,7 @@ def run_predictions(request):
                 'no_of_prediction': request.data['number_predications'],
                 'with_actual': request.data['with_actual'],
             }
-
-        print("params", params, is_api_call)
-
         model_data = SettingsElement.objects.filter(element_id=params['element_id']).values('model_path')
-
         for file in os.listdir(model_data[0]['model_path']):
             if file.find('.h5') != -1:
                 path = model_data[0]['model_path']
@@ -208,7 +203,7 @@ def run_predictions(request):
                 if match:
                     params['sequence_length'] = sequence_length
                     hour_labeled = orm_sensor_data(params, 'predict')
-
+                    
                     inputs = [float(object['value']) for object in hour_labeled]
                     time_stamps = [str(object['time']) for object in hour_labeled]
 
@@ -255,10 +250,7 @@ def run_predictions(request):
                             return JsonResponse(final_res, safe=False)
                         else:
                             return JsonResponse({'message': msg}, safe=False)
-
-
                     else:
-
                         print("with actual data is False")
                         print(len(hour_labeled))
 
@@ -270,9 +262,7 @@ def run_predictions(request):
 
                                              no_of_pred=int(params['no_of_prediction']), result=True)
                         print(msg)
-
                         def is_number(val):
-
                             try:
 
                                 float(val)
@@ -284,17 +274,11 @@ def run_predictions(request):
                                 return False
 
                         predictions = []
-
                         if len(msg) < 24:
-
                             predictions = [{"time": f"hour{id + 1}", "value": float(i)} for id, i in enumerate(msg) if
                                            is_number(i)]
                             predictions.insert(0, list(hour_labeled)[0])
-
-
-
                         else:
-
                             for day in range(0, len(msg), 24):
                                 raw_vals = msg[day:day + 24]
                                 day_vals = [float(val) for val in raw_vals if is_number(val)]
@@ -303,10 +287,8 @@ def run_predictions(request):
                                     day_avg = sum(day_vals) / len(day_vals)
                                     predictions.append({"time": f"day{len(predictions) + 1}",
                                                         "value": round(day_avg, 2)})
-
                             if hour_labeled:
                                 predictions.insert(0, list(hour_labeled)[0])
-
                         if res:
                             final_res = {
                                 "success": True,
@@ -326,8 +308,9 @@ def two_point_ref_scaling():
     pass
 
 
+
 @api_view(['POST'])
-def run_predictions1(request):
+def run_predictions(request):
     is_api_call = False
     if request.method == 'POST':
         params = {
@@ -998,7 +981,9 @@ def train_model(requests):
                 # model builder
                 model = ModelBuilder(train_params['element_id'], model_path, train_params['epochs'],
                                      train_params['sequence_length'])
+                
                 res, msg = model.build_model(train_data)
+                
                 print(res, msg)
 
                 if res:

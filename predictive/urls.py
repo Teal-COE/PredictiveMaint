@@ -41,10 +41,8 @@ urlpatterns = [
 
     path('predictive_screen/', pred.predictive_screen, name='predictive_screen'),
     path('run_predictions/', pred.run_predictions, name='ajax_predictive_screen-data'),
-    path('run_predictions1/', pred.run_predictions1, name='ajax_predictive'),
+    path('run_predictions1/', pred.run_predictionsAkash, name='ajax_predictive'),
 
-   
-  
     path('check_server/', pred.is_server_live),
     path('datalog/', pred.datalog),
     path('pred_sensors/', pred.get_pred_sensor_list),
