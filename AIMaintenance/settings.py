@@ -149,9 +149,8 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
 }
 
-
-LOGIN_URL = 'login_screen'  # Name of your login URL pattern
-LOGIN_REDIRECT_URL = 'service_page'  # Where to go after login
+LOGIN_URL = '/predictive/'  # Name of your login URL pattern
+LOGIN_REDIRECT_URL = '/login_screen/'  # Where to go after login
 LOGOUT_REDIRECT_URL = 'login_screen'  # Where to go after logout
 
 PAGINATION_PAGE_SIZE = 5  # or any default value you want

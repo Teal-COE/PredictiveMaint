@@ -40,7 +40,6 @@ def anamoly_limits(data, multiplier=1.5):
             'error': E
         }
 
-
 def predictor(prediction_data, path, sequence_length, no_of_pred=1, result=False):
     model_path = ''
     scaler_path = ''
@@ -98,7 +97,7 @@ class ModelBuilder:
         self.scaler = MinMaxScaler(feature_range=(0, 1))
         self.model_path = ''
         if self.path[-1] != '/':
-            self.path = path + '/'
+            self.path = path + '/' 
         print(self.path)
 
     def pre_checks(self):

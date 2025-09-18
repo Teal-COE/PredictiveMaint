@@ -10,7 +10,6 @@ from collections import defaultdict
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from asyncio import sleep
-
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse, HttpResponse
 from django.core.mail import send_mail
@@ -41,7 +40,6 @@ MODEL_MAIN_PATH = 'all_models/'
 ANOMALY_VARIABLES = {}
 HOUR_MODE = False
 
-
 def get_lines(request):
     company_code = request.GET.get('company_code')
     plant_code = request.GET.get('plant_code')
@@ -52,7 +50,6 @@ def get_lines(request):
             'line_code').distinct()
         lines = [l['line_code'] for l in lines_qs]
     return JsonResponse({'lines': lines})
-
 
 def plant_code(request):
     if request.method == "POST":
@@ -307,8 +304,6 @@ def run_predictionsAkash(request):
 def two_point_ref_scaling():
     pass
 
-
-
 @api_view(['POST'])
 def run_predictions(request):
     is_api_call = False
@@ -437,7 +432,6 @@ def ajax_predictive_screen1(request):
             return JsonResponse({"success": False, "error": str(e)})
 
     return JsonResponse({"success": False, "message": "Invalid request"})
-
 
 @login_required
 @never_cache
