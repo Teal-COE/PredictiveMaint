@@ -96,9 +96,9 @@
         </div>
         </div>
 
-        <div class="chart-container" id="chartContainer" style="display: none;box-sizing: border-box;height: 475px;width:100%;">
-            <canvas id="chart"></canvas>
-        </div>
+       <div id="chartContainer" style="width: 100%; display: none;">
+  <div id="chart" style="width: 100%; height: 400px;"></div>
+</div>
 
         </div>
     </div>
@@ -110,6 +110,7 @@
 
 <script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
 <script src="{% static 'js/jquery.validate.min.js' %}"></script>
+<script src="{% static 'js/echarts.min.js' %}"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
 <style>
@@ -193,130 +194,115 @@
     return selectedDate <= now;
 }, "End datetime must not be in the future.");
 
-    // Initialize form validation
-    $("#sensorDataForm").validate({
-
-        errorClass: "error text-danger",  // Apply 'text-danger' class to error messages
-        errorElement: "label",  // Error messages will be placed in <label> tags
-        rules: {
-            sensor_name: {
-                required: true,  // Ensure a sensor is selected
-            },
-            start_datetime: {
-                required: true,  // Ensure start datetime is provided
-            },
-            end_datetime: {
-                required: true,  // Ensure end datetime is provided
-                greaterThanStart: true,  // Custom validation to ensure proper datetime order
-                notGreaterThanNow: true
-            }
-        },
-        messages: {
-            sensor_name: {
-                required: "Please select a sensor."  // Custom message for Sensor Name
-            },
-            start_datetime: {
-                required: "Start datetime is required."
-            },
-            end_datetime: {
-                required: "End datetime is required.",
-                greaterThanStart: "End datetime must be greater than start datetime." // Custom message
-            }
-        },
-        highlight: function (element) {
-            $(element).addClass('is-invalid').removeClass('is-valid');
-        },
-        unhighlight: function (element) {
-            $(element).removeClass('is-invalid').addClass('is-valid');
-        },
-        submitHandler: function (form, event) {
-            event.preventDefault(); // Prevent default form submission
-
-            // Collect form data
-            var sensorName = $('#sensorName').val();
-            var startDatetime = $('#startDatetime').val();
-            var endDatetime = $('#endDatetime').val();
-            var csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
-            // Show loading spinner or disable the button
-            $('#responseMessage').html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...');
-            $('#getDataButton').prop('disabled', true);
-
-            // AJAX request to fetch sensor data
-            $.ajax({
-                url: '{% url "ajax_sensor_data" %}',  // URL of the Django view
-                type: 'POST',
-                data: {
-                    sensor_name: sensorName,
-                    start_datetime: startDatetime,
-                    end_datetime: endDatetime,
-                    csrfmiddlewaretoken: csrfToken // CSRF token for security
-                },
-                success: function (response) {
-                    // Enable the button
-                    $('#getDataButton').prop('disabled', false);
-
-                    if (response.success) {
-                        // Show chart container and render chart
-                        $('#chartContainer').show();
-                        $('#showPopupButton').show();
-
-                        var ctx = document.getElementById('chart').getContext('2d');
-                        if (Chart.getChart(ctx)) {
-                            Chart.getChart(ctx).destroy(); // Destroy existing chart if present
-                        }
-
-                        const labels = response.data.chartData.map(item => item.time);
-                        const values = response.data.chartData.map(item => parseFloat(item.value));
-
-                        new Chart(ctx, {
-                            type: 'line',
-                            data: {
-                                labels: labels,
-                                datasets: [{
-                                    label: "Training Data",
-                                    data: values,
-                                    borderColor: 'rgba(75, 192, 192, 1)',
-                                    fill: false
-                                }]
-                            },
-                            options: {
-                                    responsive: true,
-                                    maintainAspectRatio: false,
-                                    scales: {
-                                        x: {
-                                            title: {
-                                                display: true,
-                                                // NAME YOUR X-AXIS TITLE HERE
-                                                text: 'Timestamp'
-                                            }
-                                        },
-                                        y: {
-                                            title: {
-                                                display: true,
-                                                // NAME YOUR Y-AXIS TITLE HERE
-                                                text: 'Sensor Values'
-                                            }
-                                        }
-                                    }
-                                }
-                            });
-
-                    } else {
-                        // Handle case when no data is found
-                        $('#responseMessage').html('<span class="text-warning">No data found for the selected range.</span>');
-                        $('#chartContainer').hide(); // Hide chart if no data
-                    }
-                },
-                error: function (xhr, status, error) {
-                    // Enable the button
-                    $('#getDataButton').prop('disabled', false);
-                    $('#responseMessage').html('<span class="text-danger">An error occurred while fetching data. Please try again.</span>');
-                    console.error('Error:', error);
-                    $('#chartContainer').hide(); // Hide chart on error
-                }
-            });
+// Initialize form validation
+$("#sensorDataForm").validate({
+    errorClass: "error text-danger",
+    errorElement: "label",
+    rules: {
+        sensor_name: { required: true },
+        start_datetime: { required: true },
+        end_datetime: {
+            required: true,
+            greaterThanStart: true,
+            notGreaterThanNow: true
         }
-    });
+    },
+    messages: {
+        sensor_name: { required: "Please select a sensor." },
+        start_datetime: { required: "Start datetime is required." },
+        end_datetime: {
+            required: "End datetime is required.",
+            greaterThanStart: "End datetime must be greater than start datetime."
+        }
+    },
+    highlight: function (element) {
+        $(element).addClass('is-invalid').removeClass('is-valid');
+    },
+    unhighlight: function (element) {
+        $(element).removeClass('is-invalid').addClass('is-valid');
+    },
+    submitHandler: function (form, event) {
+        event.preventDefault();
+
+        var sensorName = $('#sensorName').val();
+        var startDatetime = $('#startDatetime').val();
+        var endDatetime = $('#endDatetime').val();
+        var csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
+
+        $('#responseMessage').html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...');
+        $('#getDataButton').prop('disabled', true);
+
+        $.ajax({
+            url: '{% url "ajax_sensor_data" %}',
+            type: 'POST',
+            data: {
+                sensor_name: sensorName,
+                start_datetime: startDatetime,
+                end_datetime: endDatetime,
+                csrfmiddlewaretoken: csrfToken
+            },
+           success: function (response) {
+    $('#getDataButton').prop('disabled', false);
+
+    if (response.success) {
+        $('#chartContainer').show();
+        $('#showPopupButton').show();
+
+        const labels = response.data.chartData.map(item => item.time);
+        const values = response.data.chartData.map(item => parseFloat(item.value));
+
+        var chartDom = document.getElementById('chart');
+        var myChart = echarts.init(chartDom);
+
+        var option = {
+            title: { text: 'Training Data' },
+            tooltip: { trigger: 'axis' },
+            xAxis: {
+                type: 'category',
+                data: labels,
+                name: 'Timestamp'
+            },
+            yAxis: {
+                type: 'value',
+                name: 'Sensor Values'
+            },
+            series: [{
+                data: values,
+                type: 'line',
+                smooth: true,
+                lineStyle: { color: 'rgba(75, 192, 192, 1)', width: 2 },
+                symbol: 'circle'
+            }],
+            grid: {
+                left: '10%',
+                right: '5%',
+                bottom: '20%',
+                containLabel: true
+            },
+            dataZoom: [
+                {
+                    type: 'slider',      // bottom slider bar
+                    start: 0,
+                    end: 100
+                },
+                {
+                    type: 'inside',      // zoom using mouse wheel & drag
+                    zoomOnMouseWheel: true,
+                    moveOnMouseMove: true
+                }
+            ]
+        };
+
+        myChart.setOption(option);
+        window.addEventListener('resize', () => myChart.resize());
+    } else {
+        $('#responseMessage').html('<span class="text-warning">No data found for the selected range.</span>');
+        $('#chartContainer').hide();
+    }
+}
+        });
+    }
+});
 
     // Fetch earliest start date when the sensor name is selected
     $('#sensorName').on('change', function () {
